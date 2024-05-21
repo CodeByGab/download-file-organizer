@@ -19,8 +19,7 @@ import errno
 #     "Torrent": [".torrent"],
 #     "ISO": [".iso"],
 #     "Documents": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".odt", ".ods", ".odp", ".csv"],
-#     "Zipped": [".zip", ".rar"],
-#     "Notepads": [".txt"],
+#     "Zipped": [".zip", ".rar"]
 # }
 
 # Versão em português
@@ -33,8 +32,7 @@ files_extensions = {
     "Torrent": [".torrent"],
     "ISO": [".iso"],
     "Documentos": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".odt", ".ods", ".odp", ".csv"],
-    "Zipados": [".zip", ".rar"],
-    "Blocos de Notas": [".txt"],
+    "Zipados": [".zip", ".rar"]
 }
 
 def get_folder_extension(ext):
