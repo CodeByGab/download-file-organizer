@@ -46,7 +46,8 @@ def get_folder_extension(ext):
 
 # Put your Download Directory
 # Or just the Path you want to organize / watch
-download_file_path = "C:\\Users\\gabri\\Documents\\HD\\AOp\\2023\\Python\\file-organizer\\testFile"
+
+download_file_path = "C:\\Users\\{Your-User}\\{Your}\\{Path}\\{Here}"
 
 def organize_existing_files():
     for file in os.listdir(download_file_path):
