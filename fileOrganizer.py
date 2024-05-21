@@ -9,17 +9,32 @@ import errno
 # This is the way I like to organize my files,
 # But you can change in your way
 
+# English version
 files_extensions = {
+    "Images": [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".gif", ".webp", ".apng", ".avif"],
+    "Videos": [".webm", ".MTS", ".M2TS", ".TS", ".mov", ".mp4", ".m4p", ".m4v", ".mxf", ".mkv"],
+    "Audios": [".3ga", ".aac", ".ac3", ".aif", ".aiff", ".alac", ".amr", ".ape", ".au", ".dss", ".flac", ".flv", ".m4a", ".m4b", ".m4p", ".mp3", ".mpga", ".ogg", ".oga", ".mogg", ".opus", ".qcp", ".tta", ".voc", ".wav", ".wma", ".wv"],
+    "Svg": [".svg"],
+    "Executables": [".exe"],
+    "Torrent": [".torrent"],
+    "ISO": [".iso"],
+    "Documents": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".odt", ".ods", ".odp", ".csv"],
+    "Zipped": [".zip", ".rar"],
+    "Notepads": [".txt"],
+}
+
+# Versão em português
+files_extensions_pt = {
     "Imagens": [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".gif", ".webp", ".apng", ".avif"],
     "Vídeos": [".webm", ".MTS", ".M2TS", ".TS", ".mov", ".mp4", ".m4p", ".m4v", ".mxf", ".mkv"],
-    "Áudio": [".3ga", ".aac", ".ac3", ".aif", ".aiff", ".alac", ".amr", ".ape", ".au", ".dss", ".flac", ".flv", ".m4a", ".m4b", ".m4p", ".mp3", ".mpga", ".ogg", ".oga", ".mogg", ".opus", ".qcp", ".tta", ".voc", ".wav", ".wma", ".wv"],
+    "Áudios": [".3ga", ".aac", ".ac3", ".aif", ".aiff", ".alac", ".amr", ".ape", ".au", ".dss", ".flac", ".flv", ".m4a", ".m4b", ".m4p", ".mp3", ".mpga", ".ogg", ".oga", ".mogg", ".opus", ".qcp", ".tta", ".voc", ".wav", ".wma", ".wv"],
     "Svg": [".svg"],
     "Executáveis": [".exe"],
     "Torrent": [".torrent"],
     "ISO": [".iso"],
     "Documentos": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".odt", ".ods", ".odp", ".csv"],
     "Zipados": [".zip", ".rar"],
-    "Bloco de Notas": [".txt"],
+    "Blocos de Notas": [".txt"],
 }
 
 def get_folder_extension(ext):
@@ -28,6 +43,8 @@ def get_folder_extension(ext):
             return folder
     return "Outros"
 
+# Put your Download Directory
+# Or just the Path you want to organize / watch
 download_file_path = "C:\\Users\\gabri\\Documents\\HD\\AOp\\2023\\Python\\file-organizer\\testFile"
 
 def organize_existing_files():
@@ -46,47 +63,51 @@ def organize_single_file(file_path):
 
     attempts = 5
 
+    # The attempts is because if you copy and paste some file
+    # In the directory, the file is being used, so the watcher
+    # Can't interact with the file
+    # So we try sometimes until we can move :)
+
     while attempts > 0:
         try: 
             shutil.move(file_path, destination_path)
-            print("arquivo movido com sucesso")
+            print("File moved succesfully")
             break
         except PermissionError as e:
             if e.errno == errno.EACCES:
-                print("arquivo em uso, tentando novamente em 1 segundo")
+                print("File in use, trying again in 1 second")
                 time.sleep(1)
                 attempts -= 1
             else: 
                 raise e
         except FileNotFoundError as e:
-            print("arquivo não encontrado")
+            print(f"File not found: {e}")
             break
         except Exception as e:
-            print("Erro ao mover o arquivo")
+            print(f"Error moving file: {e}")
             break
     else:
-        print("falha após várias tantaivas")
+        print("Fail after several attemps")
 
 class MyHandler(FileSystemEventHandler):
     def on_created(self, event):
         if not event.is_directory:
-            print(f"Novo arquivo detectado: {event.src_path}")
+            print(f"New file detected: {event.src_path}")
             try:
                 organize_single_file(event.src_path)
             except:
-                print(f"arquivo nao foi organizado")
+                print(f"The file was not organized")
 
     def on_modified(self, event):
         if not event.is_directory:
-            print(f"Arquivo modificado: {event.src_path}")
+            print(f"Modified file: {event.src_path}")
             organize_single_file(event.src_path)
 
     def on_moved(self, event):
         if not event.is_directory:
-            print(f"Arquivo movido: {event.src_path} para {event.dest_path}")
-            # Verifica se o arquivo movido está dentro do diretório observado
+            print(f"Moved file: {event.src_path} to {event.dest_path}")
             if Path(event.dest_path).parent == Path(download_file_path):
-                print(f"Arquivo movido para dentro do diretório observado")
+                print(f"File moved into observed directory")
                 organize_single_file(event.dest_path)
 
 if __name__ == "__main__":
@@ -102,12 +123,12 @@ if __name__ == "__main__":
     observer.start()
 
     try:
-        print("Observando historico de downlaod")
+        print("Watching download history")
 
         while True:
             time.sleep(1)
     except KeyboardInterrupt as e:
         observer.stop()
-        print(f"Erro ao organizar arquivo: {e}")
+        print(f"Erro organizing file: {e}")
 
     observer.join()
