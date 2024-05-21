@@ -10,21 +10,21 @@ import errno
 # But you can change in your way
 
 # English version
-files_extensions = {
-    "Images": [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".gif", ".webp", ".apng", ".avif"],
-    "Videos": [".webm", ".MTS", ".M2TS", ".TS", ".mov", ".mp4", ".m4p", ".m4v", ".mxf", ".mkv"],
-    "Audios": [".3ga", ".aac", ".ac3", ".aif", ".aiff", ".alac", ".amr", ".ape", ".au", ".dss", ".flac", ".flv", ".m4a", ".m4b", ".m4p", ".mp3", ".mpga", ".ogg", ".oga", ".mogg", ".opus", ".qcp", ".tta", ".voc", ".wav", ".wma", ".wv"],
-    "Svg": [".svg"],
-    "Executables": [".exe"],
-    "Torrent": [".torrent"],
-    "ISO": [".iso"],
-    "Documents": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".odt", ".ods", ".odp", ".csv"],
-    "Zipped": [".zip", ".rar"],
-    "Notepads": [".txt"],
-}
+# files_extensions = {
+#     "Images": [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".gif", ".webp", ".apng", ".avif"],
+#     "Videos": [".webm", ".MTS", ".M2TS", ".TS", ".mov", ".mp4", ".m4p", ".m4v", ".mxf", ".mkv"],
+#     "Audios": [".3ga", ".aac", ".ac3", ".aif", ".aiff", ".alac", ".amr", ".ape", ".au", ".dss", ".flac", ".flv", ".m4a", ".m4b", ".m4p", ".mp3", ".mpga", ".ogg", ".oga", ".mogg", ".opus", ".qcp", ".tta", ".voc", ".wav", ".wma", ".wv"],
+#     "Svg": [".svg"],
+#     "Executables": [".exe"],
+#     "Torrent": [".torrent"],
+#     "ISO": [".iso"],
+#     "Documents": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".odt", ".ods", ".odp", ".csv"],
+#     "Zipped": [".zip", ".rar"],
+#     "Notepads": [".txt"],
+# }
 
 # Versão em português
-files_extensions_pt = {
+files_extensions = {
     "Imagens": [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png", ".gif", ".webp", ".apng", ".avif"],
     "Vídeos": [".webm", ".MTS", ".M2TS", ".TS", ".mov", ".mp4", ".m4p", ".m4v", ".mxf", ".mkv"],
     "Áudios": [".3ga", ".aac", ".ac3", ".aif", ".aiff", ".alac", ".amr", ".ape", ".au", ".dss", ".flac", ".flv", ".m4a", ".m4b", ".m4p", ".mp3", ".mpga", ".ogg", ".oga", ".mogg", ".opus", ".qcp", ".tta", ".voc", ".wav", ".wma", ".wv"],
@@ -41,6 +41,7 @@ def get_folder_extension(ext):
     for folder, exts in files_extensions.items():
         if ext in exts:
             return folder
+    # return "Others"
     return "Outros"
 
 # Put your Download Directory
@@ -57,9 +58,10 @@ def organize_single_file(file_path):
     file_name = os.path.basename(file_path)
     extension = os.path.splitext(file_name)[1].lower()
     folder = get_folder_extension(extension)
-    Path(folder).mkdir(exist_ok=True)
+    destination_folder = os.path.join(download_file_path, folder)
+    Path(destination_folder).mkdir(parents=True, exist_ok=True)
 
-    destination_path = os.path.join(download_file_path, folder, file_name)
+    destination_path = os.path.join(destination_folder, file_name)
 
     attempts = 5
 
@@ -101,14 +103,21 @@ class MyHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if not event.is_directory:
             print(f"Modified file: {event.src_path}")
-            organize_single_file(event.src_path)
+            try:
+                organize_single_file(event.src_path)
+            except Exception as e:
+                print(f"Failed to organize file: {e}")
+
 
     def on_moved(self, event):
         if not event.is_directory:
             print(f"Moved file: {event.src_path} to {event.dest_path}")
             if Path(event.dest_path).parent == Path(download_file_path):
                 print(f"File moved into observed directory")
-                organize_single_file(event.dest_path)
+                try:
+                    organize_single_file(event.dest_path)
+                except Exception as e:
+                    print(f"Failed to organize file {e}")
 
 if __name__ == "__main__":
 
@@ -129,6 +138,6 @@ if __name__ == "__main__":
             time.sleep(1)
     except KeyboardInterrupt as e:
         observer.stop()
-        print(f"Erro organizing file: {e}")
+        print(f"Error organizing file: {e}")
 
     observer.join()
