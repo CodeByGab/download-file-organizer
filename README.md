@@ -14,7 +14,7 @@ pip install watchdog
 
 ## How to use
 
-First, you need to close the repository.
+First, you need to clone the repository.
 
 ```sh
 git clone https://github.com/CodeByGab/download-file-organizer.git
