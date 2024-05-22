@@ -51,6 +51,6 @@ abra um issue primeiro para discutir o que gostaria de ser mudado
 
 Certifique-se de atualizar os testes conforme apropriado.
 
-## License
+## Licença
 
 [MIT](https://choosealicense.com/licenses/mit/)
