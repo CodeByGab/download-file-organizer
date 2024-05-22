@@ -1,5 +1,7 @@
 # Download File Organizer
 
+[Texto em Português](./readme-languages/README.md)
+
 This script automates the organization of your downloaded files.
 
 ## Installation
