@@ -20,7 +20,6 @@ cd download-file-organizer
 ```
 
 Agora, edite o caminho para a sua pasta de downloads. <br />
-Now, edit the path to your download path folder. <br />
 O exemplo dado é um diretório do Windows, mas você pode mudar o diretório para ser compatível com o seu Sistema Operacional.
 ```python
 # Ponha aqui o diretório do seu Download
